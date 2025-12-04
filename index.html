@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>CiteClue – Piloto</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    body {
+      background: #f9fafb;
+      color: #111827;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .app {
+      background: #ffffff;
+      width: 100%;
+      max-width: 560px;
+      border-radius: 20px;
+      padding: 18px 18px 20px;
+      box-shadow:
+        0 18px 40px rgba(15, 23, 42, 0.12),
+        0 0 0 1px rgba(148, 163, 184, 0.5);
+      position: relative;
+    }
+
+    .header {
+      border-radius: 16px;
+      padding: 12px 14px 14px;
+      margin-bottom: 14px;
+      background: linear-gradient(135deg, #0f172a, #4b5563);
+      color: #f9fafb;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .title-box {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .title {
+      font-size: 1.7rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .subtitle {
+      font-size: 0.85rem;
+      opacity: 0.9;
+    }
+
+    .icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 20%, #fde68a 0, #f97316 40%, #b91c1c 100%);
+      box-shadow: 0 6px 14px rgba(185, 28, 28, 0.7);
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .icon::before,
+    .icon::after {
+      content: "";
+      position: absolute;
+      background: #fef9c3;
+      border-radius: 999px;
+    }
+
+    .icon::before {
+      width: 6px;
+      height: 18px;
+      left: 17px;
+      top: 8px;
+    }
+
+    .icon::after {
+      width: 10px;
+      height: 10px;
+      border-radius: 3px;
+      border: 2px solid #0f172a;
+      top: 22px;
+      right: 6px;
+      transform: rotate(35deg);
+    }
+
+    .section-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #111827;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .section-title::before {
+      content: "";
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #60a5fa, #fb7185);
+    }
+
+    .section-help {
+      font-size: 0.8rem;
+      color: #4b5563;
+      margin-bottom: 8px;
+      line-height: 1.4;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 90px;
+      border-radius: 14px;
+      border: 1px solid #d1d5db;
+      padding: 8px 10px;
+      font-size: 0.9rem;
+      resize: vertical;
+      outline: none;
+      background: #ffffff;
+      color: #111827;
+      margin-bottom: 10px;
+    }
+
+    textarea::placeholder {
+      color: #9ca3af;
+    }
+
+    textarea:focus {
+      border-color: #60a5fa;
+      box-shadow:
+        0 0 0 1px rgba(96, 165, 250, 0.8),
+        0 0 0 4px rgba(191, 219, 254, 0.8);
+    }
+
+    button {
+      cursor: pointer;
+      border-radius: 999px;
+      border: none;
+      padding: 9px 14px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      min-width: 120px;
+      transition:
+        transform 0.05s ease,
+        box-shadow 0.05s ease,
+        background 0.15s ease,
+        color 0.15s ease,
+        border-color 0.15s ease,
+        opacity 0.1s ease;
+    }
+
+    button:active {
+      transform: scale(0.97);
+      box-shadow: none;
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #60a5fa, #fb7185);
+      color: #0f172a;
+      box-shadow: 0 8px 20px rgba(248, 113, 113, 0.45);
+      border: 1px solid rgba(148, 163, 184, 0.7);
+    }
+
+    .btn-outline {
+      background: #ffffff;
+      color: #111827;
+      border: 1px solid #cbd5f5;
+      box-shadow: 0 3px 8px rgba(15, 23, 42, 0.06);
+    }
+
+    .btn-small {
+      padding: 6px 10px;
+      font-size: 0.8rem;
+      min-width: 0;
+      background: #ffffff;
+      border: 1px solid #cbd5f5;
+      color: #111827;
+      box-shadow: 0 1px 3px rgba(15, 23, 42, 0.15);
+    }
+
+    .btn-small.danger {
+      border-color: #fecaca;
+      color: #b91c1c;
+    }
+
+    .btn-small.success {
+      border-color: #bbf7d0;
+      color: #15803d;
+    }
+
+    .btn-inline-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 6px;
+    }
+
+    .view {
+      display: none;
+    }
+
+    .view.active {
+      display: block;
+    }
+
+    .info-box {
+      font-size: 0.8rem;
+      color: #4b5563;
+      background: #f9fafb;
+      border-radius: 12px;
+      padding: 8px 10px;
+      border: 1px dashed #e5e7eb;
+      margin-bottom: 10px;
+    }
+
+    .list-block {
+      border-radius: 12px;
+      border: 1px solid #e5e7eb;
+      background: #f9fafb;
+      padding: 8px 10px;
+      margin-bottom: 8px;
+    }
+
+    .list-block-title {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #374151;
+      margin-bottom: 4px;
+    }
+
+    .list-block-body {
+      font-size: 0.8rem;
+      color: #4b5563;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid #e5e7eb;
+      background: #ffffff;
+      font-size: 0.8rem;
+      margin: 2px 4px 2px 0;
+    }
+
+    .players-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 6px;
+      margin-bottom: 10px;
+    }
+
+    .player-card {
+      border-radius: 999px;
+      padding: 6px 10px;
+      border: 1px solid #e5e7eb;
+      background: #f9fafb;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: background 0.1s ease, box-shadow 0.1s ease, transform 0.05s ease;
+    }
+
+    .player-card:active {
+      transform: scale(0.97);
+    }
+
+    .player-card.active {
+      background: #eff6ff;
+      border-color: #93c5fd;
+      box-shadow: 0 2px 6px rgba(59, 130, 246, 0.25);
+    }
+
+    .cards-view {
+      margin-top: 4px;
+      font-size: 0.8rem;
+      color: #111827;
+    }
+
+    .current-turn {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    select {
+      width: 100%;
+      border-radius: 999px;
+      border: 1px solid #d1d5db;
+      padding: 7px 10px;
+      font-size: 0.85rem;
+      margin-bottom: 6px;
+      background: #ffffff;
+      outline: none;
+    }
+
+    select:focus {
+      border-color: #60a5fa;
+      box-shadow:
+        0 0 0 1px rgba(96, 165, 250, 0.8),
+        0 0 0 4px rgba(191, 219, 254, 0.8);
+    }
+
+    .status-box {
+      margin-top: 6px;
+      padding: 6px 8px;
+      border-radius: 10px;
+      font-size: 0.8rem;
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      color: #374151;
+      min-height: 34px;
+    }
+
+    .status-box strong {
+      font-weight: 700;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.7rem;
+      padding: 3px 7px;
+      border-radius: 999px;
+      background: #eff6ff;
+      color: #1d4ed8;
+      border: 1px solid #bfdbfe;
+    }
+
+    .tag span {
+      font-weight: 600;
+    }
+
+    .footer-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-top: 8px;
+      flex-wrap: wrap;
+      font-size: 0.78rem;
+      color: #6b7280;
+    }
+
+    .link-btn {
+      border: none;
+      background: none;
+      color: #2563eb;
+      text-decoration: underline;
+      padding: 0;
+      font-size: 0.8rem;
+      cursor: pointer;
+    }
+
+    /* Panel baraja */
+    .deck-panel {
+      position: absolute;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.28);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 20;
+    }
+
+    .deck-panel-inner {
+      max-width: 520px;
+      width: 100%;
+      background: #ffffff;
+      border-radius: 18px;
+      padding: 12px 14px;
+      box-shadow:
+        0 20px 40px rgba(15, 23, 42, 0.35),
+        0 0 0 1px rgba(148, 163, 184, 0.7);
+      font-size: 0.82rem;
+    }
+
+    .deck-panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+
+    .deck-panel-title {
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    @media (max-width: 420px) {
+      .app {
+        padding: 14px 12px 16px;
+      }
+      .title {
+        font-size: 1.45rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="header">
+      <div class="title-box">
+        <div class="title">CiteClue</div>
+        <div class="subtitle">Cluedo adaptado al comedor, sin tablero.</div>
+      </div>
+      <div class="icon"></div>
+    </div>
+
+    <!-- PANEL BARAJA EN JUEGO -->
+    <div id="deck-panel" class="deck-panel">
+      <div class="deck-panel-inner">
+        <div class="deck-panel-header">
+          <div class="deck-panel-title">Cartas en juego (partida actual)</div>
+          <button id="btn-close-deck" class="btn-small">Cerrar</button>
+        </div>
+        <div id="deck-panel-content"></div>
+      </div>
+    </div>
+
+    <!-- VISTA 1: CONFIGURAR -->
+    <div id="view-setup" class="view active">
+      <div class="section-title">1. Quién juega</div>
+      <div class="section-help">
+        Escribe los nombres de las personas que participan en esta partida (una por línea).<br>
+        El móvil lo sostiene siempre el terapeuta.
+      </div>
+      <textarea id="players-input" placeholder="Ejemplo:
+Ana
+Carla
+Lucía
+Marta
+..."></textarea>
+
+      <div class="info-box">
+        El juego elegirá automáticamente cuántos lugares y objetos usar en función del número de jugadoras,
+        y creará un misterio con <strong>persona + lugar + objeto</strong>.
+      </div>
+
+      <button id="btn-create-deck" class="btn-primary">Crear baraja y misterio</button>
+    </div>
+
+    <!-- VISTA 2: BARAJA EN JUEGO -->
+    <div id="view-deck" class="view">
+      <div class="section-title">2. Cartas en juego</div>
+      <div class="section-help">
+        Estas son las <strong>personas, lugares y objetos</strong> que existen en esta partida.
+        El misterio se ha creado con una persona, un lugar y un objeto de esta lista.
+      </div>
+
+      <div id="deck-summary"></div>
+
+      <div class="info-box">
+        Todas las jugadoras conocen esta baraja. Lo único oculto es quién tiene cada carta y cuáles están en el sobre secreto.
+      </div>
+
+      <div class="btn-inline-row">
+        <button id="btn-to-deal" class="btn-primary">Ir a reparto de cartas</button>
+        <button id="btn-back-setup" class="btn-outline">Volver y cambiar jugadoras</button>
+      </div>
+    </div>
+
+    <!-- VISTA 3: REPARTO DE CARTAS -->
+    <div id="view-deal" class="view">
+      <div class="section-title">3. Reparto de cartas</div>
+      <div class="section-help">
+        Toca el nombre de cada jugadora para mostrarle sus cartas en privado. Al retirar el móvil o volver a tocar, se ocultan.
+      </div>
+
+      <div class="players-list" id="deal-players-list"></div>
+
+      <div class="info-box">
+        Cada jugadora suele tener entre 1 y 3 cartas. Pueden comentar entre ellas qué han visto, pero la información clave es
+        deducir qué no aparece nunca.
+      </div>
+
+      <div class="btn-inline-row">
+        <button id="btn-start-game" class="btn-primary">Empezar partida</button>
+        <button id="btn-show-deck-from-deal" class="btn-outline">Ver cartas en juego</button>
+      </div>
+    </div>
+
+    <!-- VISTA 4: TURNOS -->
+    <div id="view-turns" class="view">
+      <div class="section-title">4. Turnos y acusaciones</div>
+      <div class="section-help">
+        En cada turno, la jugadora de turno puede hacer una <strong>acusación normal</strong> (para recabar información)
+        o una <strong>acusación final</strong> si cree saber la solución.
+      </div>
+
+      <div class="current-turn">
+        Turno de: <span id="current-player-label"></span>
+      </div>
+
+      <div class="info-box">
+        <strong>Acusación normal:</strong> la jugadora de turno dice una persona, un lugar y un objeto.
+        La app guiará la refutación preguntando en orden quién puede refutar.
+      </div>
+
+      <div class="list-block">
+        <div class="list-block-title">Acusación actual</div>
+        <div>
+          <select id="select-person"></select>
+          <select id="select-place"></select>
+          <select id="select-object"></select>
+        </div>
+        <div class="btn-inline-row">
+          <button id="btn-start-refutation" class="btn-primary">Iniciar refutación</button>
+          <button id="btn-final-accusation" class="btn-outline">Acusación final</button>
+        </div>
+      </div>
+
+      <div class="list-block">
+        <div class="list-block-title">Refutación</div>
+        <div id="refutation-area" class="status-box">
+          Aún no se ha iniciado ninguna acusación en este turno.
+        </div>
+        <div id="refutation-buttons" class="btn-inline-row hidden">
+          <button id="btn-refute-yes" class="btn-small success">Puede refutar</button>
+          <button id="btn-refute-no" class="btn-small">No puede</button>
+        </div>
+      </div>
+
+      <div class="list-block">
+        <div class="list-block-title">Resultado acusación final</div>
+        <div id="final-accusation-result" class="status-box">
+          Aquí aparecerá si la acusación final acierta o no el misterio.
+        </div>
+      </div>
+
+      <div class="footer-row">
+        <div class="tag"><span>ℹ</span> Versión piloto: nadie queda eliminado aunque falle la acusación final.</div>
+        <div class="btn-inline-row">
+          <button id="btn-next-turn" class="btn-small">Siguiente turno</button>
+          <button id="btn-show-deck-from-turns" class="btn-small">Ver cartas en juego</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ==========================
+    // BANCO BASE
+    // ==========================
+    const BASE_OBJECTS = [
+      "Reloj cocina",
+      "Planes de vida",
+      "Taza azul",
+      "Taza rosa",
+      "Escobilla del váter",
+      "Enchufe de ordenador",
+      "Tenedor",
+      "Bolígrafo de Citema",
+      "Mando de la tele",
+      "Mando del aire acondicionado",
+      "Pulpito contento",
+      "Aguja de crochet",
+      "Esterilla",
+      "Estatua de Gato",
+      "Jarra",
+      "Maceta",
+      "Llaves de cerezas",
+      "Teclado de piano",
+      "Cuchara",
+      "Manta"
+    ];
+
+    const BASE_LOCATIONS = [
+      "Comedor",
+      "Cocina",
+      "Salón",
+      "Armario",
+      "Sala privada",
+      "Despensa",
+      "Sala de estudio",
+      "Baño de arriba",
+      "Baño de abajo",
+      "Escalera",
+      "Entrada",
+      "Pasillo",
+      "Despacho de arriba",
+      "Despacho de abajo",
+      "Almacén de los de prácticas",
+      "Sala de biombos"
+    ];
+
+    // ==========================
+    // ESTADO
+    // ==========================
+    let players = [];
+    let locationsInPlay = [];
+    let objectsInPlay = [];
+    let envelope = null;
+    let playerCards = {};
+    let currentTurnIndex = 0;
+
+    let refutationActive = false;
+    let refutationOrder = [];
+    let refutationIndex = 0;
+    let currentAccusation = null;
+
+    // ==========================
+    // UTILIDADES
+    // ==========================
+    function shuffle(array) {
+      const arr = array.slice();
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    function showView(viewId) {
+      ["view-setup", "view-deck", "view-deal", "view-turns"].forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.classList.remove("active");
+      });
+      const target = document.getElementById(viewId);
+      if (target) {
+        target.classList.add("active");
+      }
+    }
+
+    function createDeckAndMystery() {
+      const input = document.getElementById("players-input").value;
+      const rawLines = input.split("\n").map(l => l.trim()).filter(Boolean);
+      const unique = [];
+      rawLines.forEach(name => {
+        if (!unique.includes(name)) unique.push(name);
+      });
+      if (unique.length < 3) {
+        alert("Necesitas al menos 3 jugadoras para crear el misterio.");
+        return;
+      }
+      players = unique;
+
+      // Seleccionar cuántos lugares y objetos usar
+      const P = players.length;
+      let numLocations;
+      let numObjects;
+
+      if (P <= 5) {
+        numLocations = 3;
+        numObjects = 3;
+      } else if (P <= 10) {
+        numLocations = 4;
+        numObjects = 4;
+      } else {
+        numLocations = 5;
+        numObjects = 5;
+      }
+
+      numLocations = Math.min(numLocations, BASE_LOCATIONS.length);
+      numObjects = Math.min(numObjects, BASE_OBJECTS.length);
+
+      locationsInPlay = shuffle(BASE_LOCATIONS).slice(0, numLocations);
+      objectsInPlay = shuffle(BASE_OBJECTS).slice(0, numObjects);
+
+      // Crear sobre secreto
+      const suspect = players[Math.floor(Math.random() * players.length)];
+      const locationSecret = locationsInPlay[Math.floor(Math.random() * locationsInPlay.length)];
+      const objectSecret = objectsInPlay[Math.floor(Math.random() * objectsInPlay.length)];
+
+      envelope = {
+        person: suspect,
+        place: locationSecret,
+        object: objectSecret
+      };
+
+      // Construir mazo sin las cartas del sobre
+      const personsForDeck = players.filter(p => p !== envelope.person);
+      const locationsForDeck = locationsInPlay.filter(l => l !== envelope.place);
+      const objectsForDeck = objectsInPlay.filter(o => o !== envelope.object);
+
+      let deck = personsForDeck.concat(locationsForDeck, objectsForDeck);
+      deck = shuffle(deck);
+
+      // repartir cartas de forma redonda
+      playerCards = {};
+      players.forEach(p => { playerCards[p] = []; });
+
+      let idx = 0;
+      while (deck.length > 0) {
+        const card = deck.shift();
+        const player = players[idx % players.length];
+        playerCards[player].push(card);
+        idx++;
+      }
+
+      // Actualizar resumen de baraja
+      renderDeckSummary();
+      showView("view-deck");
+    }
+
+    function renderDeckSummary() {
+      const container = document.getElementById("deck-summary");
+      const totalCards = players.length + locationsInPlay.length + objectsInPlay.length;
+      const cardsDealt = totalCards - 3;
+
+      let html = "";
+      html += `<div class="list-block">
+        <div class="list-block-title">Resumen rápido</div>
+        <div class="list-block-body">
+          Personas en juego: <strong>${players.length}</strong><br>
+          Lugares en juego: <strong>${locationsInPlay.length}</strong><br>
+          Objetos en juego: <strong>${objectsInPlay.length}</strong><br>
+          Total cartas en baraja: <strong>${totalCards}</strong> (3 en el sobre, <strong>${cardsDealt}</strong> repartidas).
+        </div>
+      </div>`;
+
+      html += `<div class="list-block">
+        <div class="list-block-title">Personas</div>
+        <div class="list-block-body">`;
+      players.forEach(p => {
+        html += `<span class="chip">${p}</span>`;
+      });
+      html += `</div></div>`;
+
+      html += `<div class="list-block">
+        <div class="list-block-title">Lugares</div>
+        <div class="list-block-body">`;
+      locationsInPlay.forEach(l => {
+        html += `<span class="chip">${l}</span>`;
+      });
+      html += `</div></div>`;
+
+      html += `<div class="list-block">
+        <div class="list-block-title">Objetos</div>
+        <div class="list-block-body">`;
+      objectsInPlay.forEach(o => {
+        html += `<span class="chip">${o}</span>`;
+      });
+      html += `</div></div>`;
+
+      container.innerHTML = html;
+    }
+
+    function renderDealPlayers() {
+      const container = document.getElementById("deal-players-list");
+      container.innerHTML = "";
+
+      players.forEach(name => {
+        const cardDiv = document.createElement("div");
+        cardDiv.className = "player-card";
+        cardDiv.textContent = name;
+
+        const cardsDiv = document.createElement("div");
+        cardsDiv.className = "cards-view hidden";
+        const cards = playerCards[name] || [];
+        if (cards.length === 0) {
+          cardsDiv.textContent = "Sin cartas.";
+        } else {
+          cardsDiv.innerHTML = "Cartas: " + cards.map(c => `<span class="chip">${c}</span>`).join(" ");
+        }
+
+        cardDiv.addEventListener("click", () => {
+          const isActive = cardDiv.classList.contains("active");
+          document.querySelectorAll(".player-card").forEach(el => el.classList.remove("active"));
+          document.querySelectorAll(".cards-view").forEach(el => el.classList.add("hidden"));
+
+          if (!isActive) {
+            cardDiv.classList.add("active");
+            cardsDiv.classList.remove("hidden");
+          }
+        });
+
+        const wrapper = document.createElement("div");
+        wrapper.style.display = "flex";
+        wrapper.style.flexDirection = "column";
+        wrapper.appendChild(cardDiv);
+        wrapper.appendChild(cardsDiv);
+
+        container.appendChild(wrapper);
+      });
+    }
+
+    function setupTurnView() {
+      currentTurnIndex = 0;
+      updateCurrentPlayerLabel();
+      populateSelects();
+      resetTurnStatus();
+    }
+
+    function updateCurrentPlayerLabel() {
+      const label = document.getElementById("current-player-label");
+      label.textContent = players[currentTurnIndex] || "";
+    }
+
+    function populateSelects() {
+      const selPerson = document.getElementById("select-person");
+      const selPlace = document.getElementById("select-place");
+      const selObject = document.getElementById("select-object");
+
+      selPerson.innerHTML = "";
+      players.forEach(p => {
+        const opt = document.createElement("option");
+        opt.value = p;
+        opt.textContent = p;
+        selPerson.appendChild(opt);
+      });
+
+      selPlace.innerHTML = "";
+      locationsInPlay.forEach(l => {
+        const opt = document.createElement("option");
+        opt.value = l;
+        opt.textContent = l;
+        selPlace.appendChild(opt);
+      });
+
+      selObject.innerHTML = "";
+      objectsInPlay.forEach(o => {
+        const opt = document.createElement("option");
+        opt.value = o;
+        opt.textContent = o;
+        selObject.appendChild(opt);
+      });
+    }
+
+    function resetTurnStatus() {
+      refutationActive = false;
+      refutationOrder = [];
+      refutationIndex = 0;
+      currentAccusation = null;
+
+      const refArea = document.getElementById("refutation-area");
+      const refButtons = document.getElementById("refutation-buttons");
+      refArea.innerHTML = "Aún no se ha iniciado ninguna acusación en este turno.";
+      refButtons.classList.add("hidden");
+    }
+
+    function startRefutation() {
+      if (refutationActive) return;
+
+      const person = document.getElementById("select-person").value;
+      const place = document.getElementById("select-place").value;
+      const object = document.getElementById("select-object").value;
+      const accuserIndex = currentTurnIndex;
+      const accuser = players[accuserIndex];
+
+      currentAccusation = { person, place, object, accuserIndex };
+
+      // Orden de refutación: empezando por la siguiente jugadora, hasta volver a la acusadora
+      refutationOrder = [];
+      for (let i = 1; i < players.length; i++) {
+        const idx = (accuserIndex + i) % players.length;
+        refutationOrder.push(idx);
+      }
+      refutationIndex = 0;
+      refutationActive = true;
+
+      const refArea = document.getElementById("refutation-area");
+      const refButtons = document.getElementById("refutation-buttons");
+
+      if (refutationOrder.length === 0) {
+        refArea.innerHTML = "No hay más jugadoras para refutar.";
+        refButtons.classList.add("hidden");
+        refutationActive = false;
+        return;
+      }
+
+      const firstIdx = refutationOrder[0];
+      refArea.innerHTML = `Acusación de <strong>${accuser}</strong>: <em>${person}</em>, <em>${place}</em>, <em>${object}</em>.<br><br>
+      Pregunta al grupo, empezando por <strong>${players[firstIdx]}</strong>: ¿puede refutar alguna de estas tres cartas?`;
+      refButtons.classList.remove("hidden");
+    }
+
+    function handleRefute(canRefute) {
+      if (!refutationActive || !currentAccusation) return;
+
+      const refArea = document.getElementById("refutation-area");
+      const refButtons = document.getElementById("refutation-buttons");
+
+      if (refutationIndex >= refutationOrder.length) {
+        // No quedan jugadoras para preguntar
+        refArea.innerHTML = `Nadie ha podido refutar esta acusación. Esto da información importante para la deducción.`;
+        refButtons.classList.add("hidden");
+        refutationActive = false;
+        return;
+      }
+
+      const idx = refutationOrder[refutationIndex];
+      const playerName = players[idx];
+
+      if (canRefute) {
+        refArea.innerHTML = `<strong>${playerName}</strong> puede refutar la acusación (tiene al menos una de esas cartas).<br>
+        La carta concreta se mantiene en secreto; solo la acusadora puede conocerla si la jugadora decide mostrársela.`;
+        refButtons.classList.add("hidden");
+        refutationActive = false;
+        return;
+      } else {
+        // pasar a la siguiente
+        refutationIndex++;
+        if (refutationIndex >= refutationOrder.length) {
+          refArea.innerHTML = `Nadie ha podido refutar esta acusación. Esto da información importante para la deducción.`;
+          refButtons.classList.add("hidden");
+          refutationActive = false;
+          return;
+        } else {
+          const nextIdx = refutationOrder[refutationIndex];
+          const nextName = players[nextIdx];
+          refArea.innerHTML = `Seguimos con la acusación de <strong>${players[currentAccusation.accuserIndex]}</strong>: <em>${currentAccusation.person}</em>, <em>${currentAccusation.place}</em>, <em>${currentAccusation.object}</em>.<br><br>
+          Pregunta a <strong>${nextName}</strong>: ¿puede refutar alguna de estas tres cartas?`;
+        }
+      }
+    }
+
+    function handleFinalAccusation() {
+      const person = document.getElementById("select-person").value;
+      const place = document.getElementById("select-place").value;
+      const object = document.getElementById("select-object").value;
+      const accuser = players[currentTurnIndex];
+
+      const resultBox = document.getElementById("final-accusation-result");
+
+      if (!envelope) {
+        resultBox.innerHTML = "Todavía no se ha creado ningún misterio.";
+        return;
+      }
+
+      const correctPerson = person === envelope.person;
+      const correctPlace = place === envelope.place;
+      const correctObject = object === envelope.object;
+
+      if (correctPerson && correctPlace && correctObject) {
+        resultBox.innerHTML = `<strong>${accuser}</strong> ha acertado el misterio 🎉<br>
+        Solución: <strong>${envelope.person}</strong>, en <strong>${envelope.place}</strong>, con <strong>${envelope.object}</strong>.`;
+      } else {
+        resultBox.innerHTML = `<strong>${accuser}</strong> no ha acertado el misterio.<br>
+        En esta versión piloto, puede seguir participando, pero el grupo sabe que esa combinación no es correcta.`;
+      }
+    }
+
+    function nextTurn() {
+      currentTurnIndex = (currentTurnIndex + 1) % players.length;
+      updateCurrentPlayerLabel();
+      resetTurnStatus();
+    }
+
+    // Panel baraja
+    function openDeckPanel() {
+      const panel = document.getElementById("deck-panel");
+      const content = document.getElementById("deck-panel-content");
+      if (!players.length) {
+        content.innerHTML = "Todavía no se ha creado ninguna partida.";
+      } else {
+        let html = "";
+        html += `<div class="list-block">
+          <div class="list-block-title">Personas</div>
+          <div class="list-block-body">`;
+        players.forEach(p => {
+          html += `<span class="chip">${p}</span>`;
+        });
+        html += `</div></div>`;
+
+        html += `<div class="list-block">
+          <div class="list-block-title">Lugares</div>
+          <div class="list-block-body">`;
+        locationsInPlay.forEach(l => {
+          html += `<span class="chip">${l}</span>`;
+        });
+        html += `</div></div>`;
+
+        html += `<div class="list-block">
+          <div class="list-block-title">Objetos</div>
+          <div class="list-block-body">`;
+        objectsInPlay.forEach(o => {
+          html += `<span class="chip">${o}</span>`;
+        });
+        html += `</div></div>`;
+
+        content.innerHTML = html;
+      }
+      panel.style.display = "flex";
+    }
+
+    function closeDeckPanel() {
+      const panel = document.getElementById("deck-panel");
+      panel.style.display = "none";
+    }
+
+    // ==========================
+    // EVENTOS
+    // ==========================
+    document.getElementById("btn-create-deck").addEventListener("click", createDeckAndMystery);
+
+    document.getElementById("btn-to-deal").addEventListener("click", () => {
+      renderDealPlayers();
+      showView("view-deal");
+    });
+
+    document.getElementById("btn-back-setup").addEventListener("click", () => {
+      showView("view-setup");
+    });
+
+    document.getElementById("btn-start-game").addEventListener("click", () => {
+      setupTurnView();
+      showView("view-turns");
+    });
+
+    document.getElementById("btn-start-refutation").addEventListener("click", startRefutation);
+    document.getElementById("btn-refute-yes").addEventListener("click", () => handleRefute(true));
+    document.getElementById("btn-refute-no").addEventListener("click", () => handleRefute(false));
+
+    document.getElementById("btn-final-accusation").addEventListener("click", handleFinalAccusation);
+    document.getElementById("btn-next-turn").addEventListener("click", nextTurn);
+
+    document.getElementById("btn-show-deck-from-deal").addEventListener("click", openDeckPanel);
+    document.getElementById("btn-show-deck-from-turns").addEventListener("click", openDeckPanel);
+    document.getElementById("btn-close-deck").addEventListener("click", closeDeckPanel);
+
+    // Inicio
+    showView("view-setup");
+  </script>
+</body>
+</html>
